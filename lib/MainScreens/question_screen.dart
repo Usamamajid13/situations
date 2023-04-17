@@ -50,211 +50,305 @@ class _QuestionScreenState extends State<QuestionScreen> {
             fit: BoxFit.cover,
           ),
         ),
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 100,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  type == "Situations"
-                      ? "assets/situationsIcon.png"
-                      : "assets/DilemmasIcon.png",
-                  scale: 4,
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Text(
-                  type,
-                  style: utils.largeHeadingTextStyle(
-                      color: type == "Situations" ? pinkColor : blueColor),
-                ),
-              ],
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            SizedBox(
-              height: 570,
-              child: Stack(
-                alignment: Alignment.topCenter,
-                children: [
-                  Positioned(
-                    bottom: 0,
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 0.8,
-                      height: 570,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.0),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            blurRadius: 2,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                        image: const DecorationImage(
-                          image: AssetImage(
-                            "assets/glass.png",
-                          ),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 200),
-                    // switchInCurve: Curves.bounceInOut,
-                    // switchOutCurve: Curves.bounceInOut,
-                    transitionBuilder:
-                        (Widget child, Animation<double> animation) {
-                      return FadeTransition(
-                        opacity: animation,
-                        child: child,
-                      );
-                    },
-                    child: StreamBuilder<QuerySnapshot>(
-                      key: ValueKey<int>(_key),
-                      stream: FirebaseFirestore.instance
-                          .collection('categories')
-                          .doc(id)
-                          .collection('questions')
-                          .snapshots(),
-                      builder: (BuildContext context,
-                          AsyncSnapshot<QuerySnapshot> snapshot) {
-                        if (snapshot.hasError) {
-                          return const Text('Something went wrong');
-                        }
-
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Text('Loading...');
-                        }
-
-                        final questions = snapshot.data!.docs;
-                        if (kDebugMode) {
-                          print(questions.length);
-                        }
-                        final randomQuestion =
-                            questions[Random().nextInt(questions.length)];
-
-                        return Container(
-                          width: MediaQuery.of(context).size.width * 0.80,
-                          height: 550,
-                          margin: const EdgeInsets.only(bottom: 15),
-                          padding: const EdgeInsets.all(20.0),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.0),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
-                                blurRadius: 2,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                            image: const DecorationImage(
-                              image: AssetImage(
-                                "assets/glass.png",
-                              ),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                width: MediaQuery.of(context).size.width * 0.4,
-                                height: 30,
-                                decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.5),
-                                  borderRadius: BorderRadius.circular(30.0),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    name,
-                                    style: utils.extraSmallTitleTextStyle(
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Text(
-                                randomQuestion['question'],
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  color: Colors.white,
-                                  height: 1.5,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Icon(
-                                    Icons.favorite_border,
-                                    color: Colors.white,
-                                    size: 30,
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      if (kDebugMode) {
-                                        print("Change");
-                                      }
-                                      _streamController.add(null);
-                                      _key++;
-
-                                      setState(() {});
-                                    },
-                                    child: const Icon(
-                                      CupertinoIcons.arrow_2_circlepath,
-                                      color: Colors.white,
-                                      size: 30,
-                                    ),
-                                  ),
-                                ],
-                              )
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(
+                height: 50,
               ),
-            ),
-            const Spacer(),
-            GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(context, settingsScreenRoute);
-              },
-              child: Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
-                    Icons.arrow_back,
-                    color: Colors.white,
+                  Image.asset(
+                    type == "Situations"
+                        ? "assets/situationsIcon.png"
+                        : "assets/DilemmasIcon.png",
+                    scale: 4,
                   ),
                   const SizedBox(
                     width: 10,
                   ),
                   Text(
-                    "Back to Categories",
-                    style: utils.mediumTitleBoldTextStyle(
-                      color: Colors.white,
-                    ),
+                    type,
+                    style: utils.largeHeadingTextStyle(
+                        color: type == "Situations" ? pinkColor : blueColor),
                   ),
                 ],
               ),
-            ),
-            const SizedBox(
-              height: 50,
-            ),
-          ],
+              const SizedBox(
+                height: 30,
+              ),
+              SizedBox(
+                height: 510,
+                child: Stack(
+                  alignment: Alignment.topCenter,
+                  children: [
+                    Positioned(
+                      bottom: 0,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        height: 510,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 2,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                          image: const DecorationImage(
+                            image: AssetImage(
+                              "assets/glass.png",
+                            ),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ),
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 200),
+                      // switchInCurve: Curves.bounceInOut,
+                      // switchOutCurve: Curves.bounceInOut,
+                      transitionBuilder:
+                          (Widget child, Animation<double> animation) {
+                        return FadeTransition(
+                          opacity: animation,
+                          child: child,
+                        );
+                      },
+                      child: StreamBuilder<QuerySnapshot>(
+                        key: ValueKey<int>(_key),
+                        stream: FirebaseFirestore.instance
+                            .collection('categories')
+                            .doc(id)
+                            .collection('questions')
+                            .snapshots(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (snapshot.hasError) {
+                            return const Text('Something went wrong');
+                          }
+
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Text('Loading...');
+                          }
+
+                          final questions = snapshot.data!.docs;
+                          if (kDebugMode) {
+                            print(questions.length);
+                          }
+
+                          return questions.isNotEmpty
+                              ? Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.80,
+                                  height: 490,
+                                  margin: const EdgeInsets.only(bottom: 15),
+                                  padding: const EdgeInsets.all(20.0),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.2),
+                                        blurRadius: 2,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ],
+                                    image: const DecorationImage(
+                                      image: AssetImage(
+                                        "assets/glass.png",
+                                      ),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.4,
+                                        height: 30,
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withOpacity(0.5),
+                                          borderRadius:
+                                              BorderRadius.circular(30.0),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            name,
+                                            style:
+                                                utils.extraSmallTitleTextStyle(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Text(
+                                        questions[Random()
+                                                .nextInt(questions.length)]
+                                            ['question'],
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                          color: Colors.white,
+                                          height: 1.5,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          const Icon(
+                                            Icons.favorite_border,
+                                            color: Colors.white,
+                                            size: 30,
+                                          ),
+                                          GestureDetector(
+                                            onTap: () {
+                                              if (kDebugMode) {
+                                                print("Change");
+                                              }
+                                              _streamController.add(null);
+                                              _key++;
+
+                                              setState(() {});
+                                            },
+                                            child: const Icon(
+                                              CupertinoIcons.arrow_2_circlepath,
+                                              color: Colors.white,
+                                              size: 30,
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                )
+                              : Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.80,
+                                  height: 490,
+                                  margin: const EdgeInsets.only(bottom: 15),
+                                  padding: const EdgeInsets.all(20.0),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.2),
+                                        blurRadius: 2,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ],
+                                    image: const DecorationImage(
+                                      image: AssetImage(
+                                        "assets/glass.png",
+                                      ),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.4,
+                                        height: 30,
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withOpacity(0.5),
+                                          borderRadius:
+                                              BorderRadius.circular(30.0),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            name,
+                                            style:
+                                                utils.extraSmallTitleTextStyle(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      const Text(
+                                        "No Questions Available",
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          color: Colors.white,
+                                          height: 1.5,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          const Icon(
+                                            Icons.favorite_border,
+                                            color: Colors.white,
+                                            size: 30,
+                                          ),
+                                          GestureDetector(
+                                            onTap: () {
+                                              if (kDebugMode) {
+                                                print("Change");
+                                              }
+                                              _streamController.add(null);
+                                              _key++;
+
+                                              setState(() {});
+                                            },
+                                            child: const Icon(
+                                              CupertinoIcons.arrow_2_circlepath,
+                                              color: Colors.white,
+                                              size: 30,
+                                            ),
+                                          ),
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.arrow_back,
+                      color: Colors.white,
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Text(
+                      "Back to Categories",
+                      style: utils.mediumTitleBoldTextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
