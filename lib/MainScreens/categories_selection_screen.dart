@@ -26,9 +26,6 @@ class _CategoriesSelectionScreenState extends State<CategoriesSelectionScreen> {
   }
 
   void getCategories() async {
-    CollectionReference categoriesRef =
-        FirebaseFirestore.instance.collection('categories');
-
     // Get categories based on selected types
 
     QuerySnapshot snapshot =
@@ -39,7 +36,9 @@ class _CategoriesSelectionScreenState extends State<CategoriesSelectionScreen> {
     }).toList();
 
     setState(() {}); // Update UI
-    print(categories.toString());
+    if (kDebugMode) {
+      print(categories.toString());
+    }
   }
 
   @override

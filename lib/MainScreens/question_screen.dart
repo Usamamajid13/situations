@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../Constants/constants.dart';
@@ -23,7 +24,9 @@ class _QuestionScreenState extends State<QuestionScreen> {
     final String name = arguments['name'];
     final String type = arguments['type'];
     final String id = arguments['id'];
-    print(type);
+    if (kDebugMode) {
+      print(type);
+    }
     return Scaffold(
       body: Container(
         width: MediaQuery.of(context).size.width,
@@ -50,7 +53,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
                       : "assets/DilemmasIcon.png",
                   scale: 4,
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 10,
                 ),
                 Text(
