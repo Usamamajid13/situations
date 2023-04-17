@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -15,6 +18,14 @@ class QuestionScreen extends StatefulWidget {
 
 class _QuestionScreenState extends State<QuestionScreen> {
   var utils = AppUtils();
+  int _key = 0;
+
+  final StreamController<void> _streamController = StreamController<void>();
+  @override
+  void dispose() {
+    _streamController.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,72 +105,123 @@ class _QuestionScreenState extends State<QuestionScreen> {
                       ),
                     ),
                   ),
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.80,
-                    height: 550,
-                    margin: const EdgeInsets.only(bottom: 15),
-                    padding: const EdgeInsets.all(20.0),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          blurRadius: 2,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                      image: const DecorationImage(
-                        image: AssetImage(
-                          "assets/glass.png",
-                        ),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          width: MediaQuery.of(context).size.width * 0.4,
-                          height: 30,
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 200),
+                    // switchInCurve: Curves.bounceInOut,
+                    // switchOutCurve: Curves.bounceInOut,
+                    transitionBuilder:
+                        (Widget child, Animation<double> animation) {
+                      return FadeTransition(
+                        opacity: animation,
+                        child: child,
+                      );
+                    },
+                    child: StreamBuilder<QuerySnapshot>(
+                      key: ValueKey<int>(_key),
+                      stream: FirebaseFirestore.instance
+                          .collection('categories')
+                          .doc(id)
+                          .collection('questions')
+                          .snapshots(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (snapshot.hasError) {
+                          return const Text('Something went wrong');
+                        }
+
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Text('Loading...');
+                        }
+
+                        final questions = snapshot.data!.docs;
+                        if (kDebugMode) {
+                          print(questions.length);
+                        }
+                        final randomQuestion =
+                            questions[Random().nextInt(questions.length)];
+
+                        return Container(
+                          width: MediaQuery.of(context).size.width * 0.80,
+                          height: 550,
+                          margin: const EdgeInsets.only(bottom: 15),
+                          padding: const EdgeInsets.all(20.0),
                           decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.5),
-                            borderRadius: BorderRadius.circular(30.0),
-                          ),
-                          child: Center(
-                            child: Text(
-                              name,
-                              style: utils.extraSmallTitleTextStyle(
-                                color: Colors.white,
+                            borderRadius: BorderRadius.circular(10.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 2,
+                                offset: const Offset(0, 2),
                               ),
+                            ],
+                            image: const DecorationImage(
+                              image: AssetImage(
+                                "assets/glass.png",
+                              ),
+                              fit: BoxFit.cover,
                             ),
                           ),
-                        ),
-                        const Text(
-                          "Imagine you and your friend are out hiking in the woods when suddenly you both come across a bear. The bear runs towards you. You have no weapons or means of defending yourselves. What would you do in this situation?",
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.white,
-                            height: 1.5,
-                            fontWeight: FontWeight.bold,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Container(
+                                width: MediaQuery.of(context).size.width * 0.4,
+                                height: 30,
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.5),
+                                  borderRadius: BorderRadius.circular(30.0),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    name,
+                                    style: utils.extraSmallTitleTextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                randomQuestion['question'],
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.white,
+                                  height: 1.5,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Icon(
+                                    Icons.favorite_border,
+                                    color: Colors.white,
+                                    size: 30,
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      if (kDebugMode) {
+                                        print("Change");
+                                      }
+                                      _streamController.add(null);
+                                      _key++;
+
+                                      setState(() {});
+                                    },
+                                    child: const Icon(
+                                      CupertinoIcons.arrow_2_circlepath,
+                                      color: Colors.white,
+                                      size: 30,
+                                    ),
+                                  ),
+                                ],
+                              )
+                            ],
                           ),
-                          textAlign: TextAlign.center,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: const [
-                            Icon(
-                              Icons.favorite_border,
-                              color: Colors.white,
-                              size: 30,
-                            ),
-                            Icon(
-                              CupertinoIcons.arrow_2_circlepath,
-                              color: Colors.white,
-                              size: 30,
-                            ),
-                          ],
-                        )
-                      ],
+                        );
+                      },
                     ),
                   ),
                 ],
