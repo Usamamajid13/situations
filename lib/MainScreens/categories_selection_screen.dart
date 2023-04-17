@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:situations/Constants/constants.dart';
 
@@ -13,6 +15,32 @@ class CategoriesSelectionScreen extends StatefulWidget {
 
 class _CategoriesSelectionScreenState extends State<CategoriesSelectionScreen> {
   var utils = AppUtils();
+  int selected = 0;
+
+  List<CategoryModel> categories = [];
+
+  @override
+  void initState() {
+    super.initState();
+    checkSelectedTypes();
+  }
+
+  void getCategories() async {
+    CollectionReference categoriesRef =
+        FirebaseFirestore.instance.collection('categories');
+
+    // Get categories based on selected types
+
+    QuerySnapshot snapshot =
+        await FirebaseFirestore.instance.collection('categories').get();
+    categories = snapshot.docs.map((category) {
+      String type = category['type'];
+      return CategoryModel(id: category.id, name: category['name'], type: type);
+    }).toList();
+
+    setState(() {}); // Update UI
+    print(categories.toString());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,47 +69,147 @@ class _CategoriesSelectionScreenState extends State<CategoriesSelectionScreen> {
               const SizedBox(
                 height: 30,
               ),
-              for (int i = 0; i < 10; i++)
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, questionScreenRoute);
-                  },
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    height: 50,
-                    margin: const EdgeInsets.only(bottom: 15),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30.0),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          blurRadius: 2,
-                          offset: const Offset(0, 3),
+              for (int i = 0; i < categories.length; i++)
+                selected == 0
+                    ? GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            questionScreenRoute,
+                            arguments: {
+                              'name': categories[i].name,
+                              'type': categories[i].type,
+                              'id': categories[i].id,
+                            },
+                          );
+                        },
+                        child: Container(
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          height: 50,
+                          margin: const EdgeInsets.only(bottom: 15),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30.0),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 2,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
+                            image: const DecorationImage(
+                              image: AssetImage(
+                                "assets/glass2.png",
+                              ),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(
+                              categories[i].name.toString(),
+                              style: utils.mediumTitleBoldTextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
                         ),
-                      ],
-                      image: const DecorationImage(
-                        image: AssetImage(
-                          "assets/glass2.png",
-                        ),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    child: Center(
-                      child: Text(
-                        "Family & Friends",
-                        style: utils.mediumTitleBoldTextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                      )
+                    : selected == 1 &&
+                            categories[i].type.toString() == "Dilemmas"
+                        ? GestureDetector(
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                questionScreenRoute,
+                                arguments: {
+                                  'name': categories[i].name,
+                                  'type': categories[i].type,
+                                  'id': categories[i].id,
+                                },
+                              );
+                            },
+                            child: Container(
+                              width: MediaQuery.of(context).size.width * 0.8,
+                              height: 50,
+                              margin: const EdgeInsets.only(bottom: 15),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.2),
+                                    blurRadius: 2,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
+                                image: const DecorationImage(
+                                  image: AssetImage(
+                                    "assets/glass2.png",
+                                  ),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  categories[i].name.toString(),
+                                  style: utils.mediumTitleBoldTextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                        : selected == 2 &&
+                                categories[i].type.toString() == "Situations"
+                            ? GestureDetector(
+                                onTap: () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    questionScreenRoute,
+                                    arguments: {
+                                      'name': categories[i].name,
+                                      'type': categories[i].type,
+                                      'id': categories[i].id,
+                                    },
+                                  );
+                                },
+                                child: Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.8,
+                                  height: 50,
+                                  margin: const EdgeInsets.only(bottom: 15),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(30.0),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.2),
+                                        blurRadius: 2,
+                                        offset: const Offset(0, 3),
+                                      ),
+                                    ],
+                                    image: const DecorationImage(
+                                      image: AssetImage(
+                                        "assets/glass2.png",
+                                      ),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      categories[i].name.toString(),
+                                      style: utils.mediumTitleBoldTextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : Container(),
               const SizedBox(
                 height: 30,
               ),
               GestureDetector(
-                onTap: () {
-                  Navigator.pushNamed(context, settingsScreenRoute);
+                onTap: () async {
+                  await Navigator.pushNamed(context, settingsScreenRoute);
+                  checkSelectedTypes();
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -111,4 +239,36 @@ class _CategoriesSelectionScreenState extends State<CategoriesSelectionScreen> {
       ),
     );
   }
+
+  void checkSelectedTypes() {
+    if (selectedTypes.contains(CategoryType.Situations) &&
+        selectedTypes.contains(CategoryType.Dilemmas)) {
+      if (kDebugMode) {
+        print('1');
+      }
+      selected = 0;
+      setState(() {});
+    } else if (selectedTypes.contains(CategoryType.Dilemmas)) {
+      if (kDebugMode) {
+        print('2');
+      }
+      selected = 1;
+      setState(() {});
+    } else if (selectedTypes.contains(CategoryType.Situations)) {
+      if (kDebugMode) {
+        print('3');
+      }
+      selected = 2;
+      setState(() {});
+    }
+    getCategories();
+  }
+}
+
+class CategoryModel {
+  final String id;
+  final String name;
+  final String type;
+
+  CategoryModel({required this.id, required this.name, required this.type});
 }

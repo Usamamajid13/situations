@@ -8,3 +8,22 @@ const settingsScreenRoute = "/settingsScreenRoute";
 const questionScreenRoute = "/questionScreenRoute";
 const landingScreenRoute = "/landingScreenRoute";
 const categoriesSelectionScreenRoute = "/categoriesSelectionScreenRoute";
+
+enum CategoryType {
+  Situations,
+  both,
+  Dilemmas,
+}
+
+Set<CategoryType> selectedTypes = {
+  CategoryType.Dilemmas,
+  CategoryType.Situations
+}; // Global variable to store selected types
+
+void updateSelectedTypes(CategoryType type) {
+  if (type == CategoryType.both) {
+    selectedTypes = {CategoryType.Situations, CategoryType.Dilemmas};
+  } else {
+    selectedTypes = {type};
+  }
+}

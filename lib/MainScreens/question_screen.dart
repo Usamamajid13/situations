@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -16,6 +17,13 @@ class _QuestionScreenState extends State<QuestionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final Map<String, dynamic> arguments =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+
+    final String name = arguments['name'];
+    final String type = arguments['type'];
+    final String id = arguments['id'];
+    print(type);
     return Scaffold(
       body: Container(
         width: MediaQuery.of(context).size.width,
@@ -33,9 +41,24 @@ class _QuestionScreenState extends State<QuestionScreen> {
             const SizedBox(
               height: 100,
             ),
-            Text(
-              "Situation",
-              style: utils.largeHeadingTextStyle(color: pinkColor),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  type == "Situations"
+                      ? "assets/situationsIcon.png"
+                      : "assets/DilemmasIcon.png",
+                  scale: 4,
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Text(
+                  type,
+                  style: utils.largeHeadingTextStyle(
+                      color: type == "Situations" ? pinkColor : blueColor),
+                ),
+              ],
             ),
             const SizedBox(
               height: 30,
@@ -101,7 +124,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
                           ),
                           child: Center(
                             child: Text(
-                              "Category",
+                              name,
                               style: utils.extraSmallTitleTextStyle(
                                 color: Colors.white,
                               ),
@@ -169,6 +192,25 @@ class _QuestionScreenState extends State<QuestionScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class QuestionModel {
+  final String id;
+  final String text;
+
+  QuestionModel({
+    required this.id,
+    required this.text,
+  });
+
+  factory QuestionModel.fromSnapshot(
+      DocumentSnapshot<Map<String, dynamic>> snapshot) {
+    final data = snapshot.data()!;
+    return QuestionModel(
+      id: snapshot.id,
+      text: data['text'] as String? ?? '',
     );
   }
 }

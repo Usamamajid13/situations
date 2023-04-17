@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../Constants/constants.dart';
@@ -13,6 +14,13 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   var utils = AppUtils();
   int selected = 0;
+
+  @override
+  void initState() {
+    checkSelectedTypes();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,6 +54,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 children: [
                   GestureDetector(
                     onTap: () {
+                      updateSelectedTypes(CategoryType.both);
                       setState(() {
                         selected = 1;
                       });
@@ -90,6 +99,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   GestureDetector(
                     onTap: () {
+                      updateSelectedTypes(CategoryType.Dilemmas);
+
                       setState(() {
                         selected = 2;
                       });
@@ -134,6 +145,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   GestureDetector(
                     onTap: () {
+                      updateSelectedTypes(CategoryType.Situations);
+
                       setState(() {
                         selected = 3;
                       });
@@ -210,5 +223,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
       ),
     );
+  }
+
+  void checkSelectedTypes() {
+    if (selectedTypes.contains(CategoryType.Situations) &&
+        selectedTypes.contains(CategoryType.Dilemmas)) {
+      if (kDebugMode) {
+        print('1');
+      }
+      selected = 1;
+      setState(() {});
+    } else if (selectedTypes.contains(CategoryType.Dilemmas)) {
+      if (kDebugMode) {
+        print('2');
+      }
+      selected = 2;
+      setState(() {});
+    } else if (selectedTypes.contains(CategoryType.Situations)) {
+      if (kDebugMode) {
+        print('3');
+      }
+      selected = 3;
+      setState(() {});
+    }
   }
 }
