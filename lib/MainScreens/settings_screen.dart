@@ -42,7 +42,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             Text(
               "Settings",
-              style: utils.largeHeadingTextStyle(color: pinkColor),
+              style: utils.largeHeadingTextStyle(
+                color: pinkColor,
+                fontFamily: "PassionOne",
+              ),
             ),
             const SizedBox(
               height: 50,
@@ -88,8 +91,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                         Text(
                           "Dilemmas and Situations",
-                          style:
-                              utils.mediumTitleTextStyle(color: Colors.white),
+                          style: utils.mediumTitleTextStyle(
+                            color: Colors.white,
+                            fontFamily: "Montserrat",
+                          ),
                         ),
                       ],
                     ),
@@ -134,8 +139,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                         Text(
                           "Only Dilemmas",
-                          style:
-                              utils.mediumTitleTextStyle(color: Colors.white),
+                          style: utils.mediumTitleTextStyle(
+                            color: Colors.white,
+                            fontFamily: "Montserrat",
+                          ),
                         ),
                       ],
                     ),
@@ -180,8 +187,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         ),
                         Text(
                           "Only Situations",
-                          style:
-                              utils.mediumTitleTextStyle(color: Colors.white),
+                          style: utils.mediumTitleTextStyle(
+                            color: Colors.white,
+                            fontFamily: "Montserrat",
+                          ),
                         ),
                       ],
                     ),
@@ -214,6 +223,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     "SAVE",
                     style: utils.largeHeadingTextStyle(
                       color: Colors.white,
+                      fontFamily: "Montserrat",
                     ),
                   ),
                 ),

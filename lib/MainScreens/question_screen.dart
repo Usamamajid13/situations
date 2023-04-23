@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:glassmorphism/glassmorphism.dart';
 
 import '../Constants/constants.dart';
 import '../Utils/app_utils.dart';
@@ -54,7 +55,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
           child: Column(
             children: [
               const SizedBox(
-                height: 50,
+                height: 100,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -69,9 +70,11 @@ class _QuestionScreenState extends State<QuestionScreen> {
                     width: 10,
                   ),
                   Text(
-                    type,
+                    type.toUpperCase(),
                     style: utils.largeHeadingTextStyle(
-                        color: type == "Situations" ? pinkColor : blueColor),
+                      color: type == "Situations" ? pinkColor : blueColor,
+                      fontFamily: "PassionOne",
+                    ),
                   ),
                 ],
               ),
@@ -79,37 +82,53 @@ class _QuestionScreenState extends State<QuestionScreen> {
                 height: 30,
               ),
               SizedBox(
-                height: 510,
+                height: MediaQuery.of(context).size.height * 0.64,
                 child: Stack(
                   alignment: Alignment.topCenter,
                   children: [
                     Positioned(
                       bottom: 0,
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.8,
-                        height: 510,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
-                              blurRadius: 2,
-                              offset: const Offset(0, 2),
-                            ),
+                      child: GlassmorphicContainer(
+                        width: MediaQuery.of(context).size.width * 0.75,
+                        height: MediaQuery.of(context).size.height * 0.65,
+                        borderRadius: 10.0,
+                        blur: 20,
+                        alignment: Alignment.center,
+                        border: 0.5,
+                        linearGradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            const Color(0xFFffffff).withOpacity(0.1),
+                            const Color(0xFFFFFFFF).withOpacity(0.05),
                           ],
-                          image: const DecorationImage(
-                            image: AssetImage(
-                              "assets/glass.png",
+                          stops: [
+                            0.1,
+                            1,
+                          ],
+                        ),
+                        borderGradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            const Color(0xFFffffff).withOpacity(0.5),
+                            const Color((0xFFFFFFFF)).withOpacity(0.5),
+                          ],
+                        ),
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage(
+                                "assets/glass.png",
+                              ),
+                              fit: BoxFit.cover,
                             ),
-                            fit: BoxFit.cover,
                           ),
                         ),
                       ),
                     ),
                     AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 200),
-                      // switchInCurve: Curves.bounceInOut,
-                      // switchOutCurve: Curves.bounceInOut,
+                      duration: const Duration(milliseconds: 300),
                       transitionBuilder:
                           (Widget child, Animation<double> animation) {
                         return FadeTransition(
@@ -141,178 +160,255 @@ class _QuestionScreenState extends State<QuestionScreen> {
                           }
 
                           return questions.isNotEmpty
-                              ? Container(
+                              ? GlassmorphicContainer(
                                   width:
-                                      MediaQuery.of(context).size.width * 0.80,
-                                  height: 490,
-                                  margin: const EdgeInsets.only(bottom: 15),
-                                  padding: const EdgeInsets.all(20.0),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.2),
-                                        blurRadius: 2,
-                                        offset: const Offset(0, 2),
-                                      ),
+                                      MediaQuery.of(context).size.width * 0.8,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.61,
+                                  borderRadius: 10.0,
+                                  blur: 20,
+                                  alignment: Alignment.center,
+                                  border: 0.5,
+                                  linearGradient: LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      const Color(0xFFffffff).withOpacity(0.1),
+                                      const Color(0xFFFFFFFF).withOpacity(0.05),
                                     ],
-                                    image: const DecorationImage(
-                                      image: AssetImage(
-                                        "assets/glass.png",
-                                      ),
-                                      fit: BoxFit.cover,
-                                    ),
+                                    stops: [
+                                      0.1,
+                                      1,
+                                    ],
                                   ),
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.4,
-                                        height: 30,
-                                        decoration: BoxDecoration(
-                                          color: Colors.black.withOpacity(0.5),
-                                          borderRadius:
-                                              BorderRadius.circular(30.0),
+                                  borderGradient: LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      const Color(0xFFffffff).withOpacity(0.5),
+                                      const Color((0xFFFFFFFF))
+                                          .withOpacity(0.5),
+                                    ],
+                                  ),
+                                  child: Container(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.90,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.8,
+                                    padding: const EdgeInsets.all(20.0),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.2),
+                                          blurRadius: 2,
+                                          offset: const Offset(0, 2),
                                         ),
-                                        child: Center(
-                                          child: Text(
-                                            name,
-                                            style:
-                                                utils.extraSmallTitleTextStyle(
-                                              color: Colors.white,
+                                      ],
+                                      image: const DecorationImage(
+                                        image: AssetImage(
+                                          "assets/glass.png",
+                                        ),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.4,
+                                          height: 30,
+                                          decoration: BoxDecoration(
+                                            color:
+                                                Colors.black.withOpacity(0.5),
+                                            borderRadius:
+                                                BorderRadius.circular(30.0),
+                                          ),
+                                          child: Center(
+                                            child: Text(
+                                              name,
+                                              style: utils
+                                                  .extraSmallTitleTextStyle(
+                                                color: Colors.white,
+                                                fontFamily: "Montserrat",
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                      Text(
-                                        questions[Random()
-                                                .nextInt(questions.length)]
-                                            ['question'],
-                                        style: const TextStyle(
-                                          fontSize: 20,
-                                          color: Colors.white,
-                                          height: 1.5,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          const Icon(
-                                            Icons.favorite_border,
+                                        Text(
+                                          questions[Random()
+                                                  .nextInt(questions.length)]
+                                              ['question'],
+                                          style: const TextStyle(
+                                            fontFamily: "MontserratBold",
+                                            fontSize: 20,
                                             color: Colors.white,
-                                            size: 30,
+                                            height: 1.5,
+                                            fontWeight: FontWeight.w900,
                                           ),
-                                          GestureDetector(
-                                            onTap: () {
-                                              if (kDebugMode) {
-                                                print("Change");
-                                              }
-                                              _streamController.add(null);
-                                              _key++;
-
-                                              setState(() {});
-                                            },
-                                            child: const Icon(
-                                              CupertinoIcons.arrow_2_circlepath,
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            const Icon(
+                                              Icons.favorite_border,
                                               color: Colors.white,
                                               size: 30,
                                             ),
-                                          ),
-                                        ],
-                                      )
-                                    ],
+                                            GestureDetector(
+                                              onTap: () {
+                                                if (kDebugMode) {
+                                                  print("Change");
+                                                }
+                                                _streamController.add(null);
+                                                _key++;
+
+                                                setState(() {});
+                                              },
+                                              child: const Icon(
+                                                CupertinoIcons
+                                                    .arrow_2_circlepath,
+                                                color: Colors.white,
+                                                size: 30,
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 )
-                              : Container(
+                              : GlassmorphicContainer(
                                   width:
-                                      MediaQuery.of(context).size.width * 0.80,
-                                  height: 490,
-                                  margin: const EdgeInsets.only(bottom: 15),
-                                  padding: const EdgeInsets.all(20.0),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.2),
-                                        blurRadius: 2,
-                                        offset: const Offset(0, 2),
-                                      ),
+                                      MediaQuery.of(context).size.width * 0.8,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.61,
+                                  borderRadius: 10.0,
+                                  blur: 20,
+                                  alignment: Alignment.center,
+                                  border: 0.5,
+                                  linearGradient: LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      const Color(0xFFffffff).withOpacity(0.1),
+                                      const Color(0xFFFFFFFF).withOpacity(0.05),
                                     ],
-                                    image: const DecorationImage(
-                                      image: AssetImage(
-                                        "assets/glass.png",
-                                      ),
-                                      fit: BoxFit.cover,
-                                    ),
+                                    stops: [
+                                      0.1,
+                                      1,
+                                    ],
                                   ),
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.4,
-                                        height: 30,
-                                        decoration: BoxDecoration(
-                                          color: Colors.black.withOpacity(0.5),
-                                          borderRadius:
-                                              BorderRadius.circular(30.0),
-                                        ),
-                                        child: Center(
-                                          child: Text(
-                                            name,
-                                            style:
-                                                utils.extraSmallTitleTextStyle(
-                                              color: Colors.white,
-                                            ),
+                                  borderGradient: LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      const Color(0xFFffffff).withOpacity(0.5),
+                                      const Color((0xFFFFFFFF))
+                                          .withOpacity(0.5),
+                                    ],
+                                  ),
+                                  child: Center(
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.8,
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.65,
+                                      padding: const EdgeInsets.all(20.0),
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color:
+                                                Colors.black.withOpacity(0.2),
+                                            blurRadius: 2,
+                                            offset: const Offset(0, 2),
                                           ),
+                                        ],
+                                        image: const DecorationImage(
+                                          image: AssetImage(
+                                            "assets/glass.png",
+                                          ),
+                                          fit: BoxFit.cover,
                                         ),
                                       ),
-                                      const Text(
-                                        "No Questions Available",
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          color: Colors.white,
-                                          height: 1.5,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                      Row(
+                                      child: Column(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
-                                          const Icon(
-                                            Icons.favorite_border,
-                                            color: Colors.white,
-                                            size: 30,
-                                          ),
-                                          GestureDetector(
-                                            onTap: () {
-                                              if (kDebugMode) {
-                                                print("Change");
-                                              }
-                                              _streamController.add(null);
-                                              _key++;
-
-                                              setState(() {});
-                                            },
-                                            child: const Icon(
-                                              CupertinoIcons.arrow_2_circlepath,
-                                              color: Colors.white,
-                                              size: 30,
+                                          Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                0.4,
+                                            height: 30,
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  Colors.black.withOpacity(0.5),
+                                              borderRadius:
+                                                  BorderRadius.circular(30.0),
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                name,
+                                                style: utils
+                                                    .extraSmallTitleTextStyle(
+                                                  color: Colors.white,
+                                                  fontFamily: "MontserratBold",
+                                                ),
+                                              ),
                                             ),
                                           ),
+                                          const Text(
+                                            "No Questions Available",
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              color: Colors.white,
+                                              height: 1.5,
+                                              fontFamily: "MontserratBold",
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              const Icon(
+                                                Icons.favorite_border,
+                                                color: Colors.white,
+                                                size: 30,
+                                              ),
+                                              GestureDetector(
+                                                onTap: () {
+                                                  if (kDebugMode) {
+                                                    print("Change");
+                                                  }
+                                                  _streamController.add(null);
+                                                  _key++;
+
+                                                  setState(() {});
+                                                },
+                                                child: const Icon(
+                                                  CupertinoIcons
+                                                      .arrow_2_circlepath,
+                                                  color: Colors.white,
+                                                  size: 30,
+                                                ),
+                                              ),
+                                            ],
+                                          )
                                         ],
-                                      )
-                                    ],
+                                      ),
+                                    ),
                                   ),
                                 );
                         },
@@ -340,8 +436,10 @@ class _QuestionScreenState extends State<QuestionScreen> {
                     ),
                     Text(
                       "Back to Categories",
-                      style: utils.mediumTitleBoldTextStyle(
+                      style: TextStyle(
                         color: Colors.white,
+                        fontSize: 22,
+                        fontFamily: "PassionOne",
                       ),
                     ),
                   ],

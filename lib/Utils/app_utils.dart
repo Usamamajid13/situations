@@ -3,18 +3,21 @@ import 'package:flutter/material.dart';
 import '../Constants/constants.dart';
 
 class AppUtils {
-  mediumTitleBoldTextStyle({color}) {
+  mediumTitleBoldTextStyle({color, fontFamily}) {
     return TextStyle(
       fontSize: 16,
+      fontFamily: fontFamily,
       color: color,
-      fontWeight: FontWeight.bold,
+      fontWeight: FontWeight.w900,
     );
   }
 
-  largeHeadingTextStyle({color}) {
+  largeHeadingTextStyle({color, fontFamily}) {
     return TextStyle(
-      fontSize: 22,
+      fontSize: 30,
       fontWeight: FontWeight.bold,
+      fontFamily: fontFamily,
+      letterSpacing: 1.4,
       color: color,
     );
   }
@@ -26,17 +29,21 @@ class AppUtils {
     );
   }
 
-  extraSmallTitleTextStyle({color}) {
+  extraSmallTitleTextStyle({color, fontFamily}) {
     return TextStyle(
       color: color,
-      fontSize: 10,
+      fontSize: 14,
+      fontFamily: fontFamily,
+      fontWeight: FontWeight.bold,
     );
   }
 
-  mediumTitleTextStyle({color}) {
+  mediumTitleTextStyle({color, fontFamily}) {
     return TextStyle(
       fontSize: 17,
       color: color,
+      fontFamily: fontFamily,
+      fontWeight: FontWeight.bold,
     );
   }
 

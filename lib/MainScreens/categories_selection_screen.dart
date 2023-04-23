@@ -63,7 +63,10 @@ class _CategoriesSelectionScreenState extends State<CategoriesSelectionScreen> {
               ),
               Text(
                 "Choose a category",
-                style: utils.largeHeadingTextStyle(color: pinkColor),
+                style: utils.largeHeadingTextStyle(
+                  color: pinkColor,
+                  fontFamily: "PassionOne",
+                ),
               ),
               const SizedBox(
                 height: 30,
@@ -107,6 +110,7 @@ class _CategoriesSelectionScreenState extends State<CategoriesSelectionScreen> {
                               categories[i].name.toString(),
                               style: utils.mediumTitleBoldTextStyle(
                                 color: Colors.white,
+                                fontFamily: "Montserrat",
                               ),
                             ),
                           ),
@@ -224,6 +228,7 @@ class _CategoriesSelectionScreenState extends State<CategoriesSelectionScreen> {
                       "Settings",
                       style: utils.mediumTitleBoldTextStyle(
                         color: Colors.white,
+                        fontFamily: "MontserratBold",
                       ),
                     ),
                   ],

@@ -56,6 +56,7 @@ class _LandingScreenState extends State<LandingScreen> {
                     "START",
                     style: utils.largeHeadingTextStyle(
                       color: Colors.white,
+                      fontFamily: "Montserrat",
                     ),
                   ),
                 ),
