@@ -249,6 +249,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
                                         ),
                                         GestureDetector(
                                           onTap: () {
+                                            isLiked = false;
                                             if (kDebugMode) {
                                               print("Change");
                                             }
@@ -430,7 +431,9 @@ class _QuestionScreenState extends State<QuestionScreen> {
 
   Future<bool> onLikeButtonTapped(bool isLikede) async {
     isLiked = !isLiked;
-    print(isLiked);
+    if (kDebugMode) {
+      print(isLiked);
+    }
     if (isLiked == true) {
       widget.category[categoryIndex].questions![index].likes =
           widget.category[categoryIndex].questions![index].likes! + 1;
@@ -438,12 +441,18 @@ class _QuestionScreenState extends State<QuestionScreen> {
       widget.category[categoryIndex].questions![index].likes =
           widget.category[categoryIndex].questions![index].likes! - 1;
     }
-    print("Assigned like");
+    if (kDebugMode) {
+      print("Assigned like");
+    }
     if (kDebugMode) {
       print(widget.category[categoryIndex].questions![index].likes);
     }
-    print("Updating Like");
-    print(widget.category);
+    if (kDebugMode) {
+      print("Updating Like");
+    }
+    if (kDebugMode) {
+      print(widget.category);
+    }
     updateData(widget.category);
     setState(() {});
     return isLiked;
@@ -454,9 +463,13 @@ class _QuestionScreenState extends State<QuestionScreen> {
       await FirebaseFirestore.instance.collection("data").doc("data").set({
         "categories": categories.map((category) => category.toJson()).toList(),
       }, SetOptions(merge: true));
-      print("Document updated");
+      if (kDebugMode) {
+        print("Document updated");
+      }
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     }
   }
 }
