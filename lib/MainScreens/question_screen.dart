@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -28,12 +29,11 @@ class _QuestionScreenState extends State<QuestionScreen> {
   final random = Random();
   bool isLiked = false;
   int index = 0;
+  int selected = 0;
   @override
   void initState() {
-    index = random.nextInt(widget.category[categoryIndex].questions!.length);
-    if (kDebugMode) {
-      print(categoryIndex);
-    }
+    checkSelectedTypes();
+
     super.initState();
   }
 
@@ -429,7 +429,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
     );
   }
 
-  Future<bool> onLikeButtonTapped(bool isLikede) async {
+  Future<bool> onLikeButtonTapped(bool isLike) async {
     isLiked = !isLiked;
     if (kDebugMode) {
       print(isLiked);
@@ -459,10 +459,18 @@ class _QuestionScreenState extends State<QuestionScreen> {
   }
 
   Future<void> updateData(List<CategoryModel> categories) async {
+    final categoriesdata = categories.map((entry) {
+      return jsonEncode({
+        "category": entry.category,
+        "questions": entry.questions,
+      });
+    }).toList();
+    final data = {
+      "categories": categoriesdata,
+    };
+
     try {
-      await FirebaseFirestore.instance.collection("data").doc("data").set({
-        "categories": categories.map((category) => category.toJson()).toList(),
-      }, SetOptions(merge: true));
+      await FirebaseFirestore.instance.collection("data").doc("data").set(data);
       if (kDebugMode) {
         print("Document updated");
       }
@@ -471,6 +479,44 @@ class _QuestionScreenState extends State<QuestionScreen> {
         print(e);
       }
     }
+  }
+
+  void checkSelectedTypes() {
+    if (selectedTypes.contains(CategoryType.Situations) &&
+        selectedTypes.contains(CategoryType.Dilemmas)) {
+      if (kDebugMode) {
+        print('1');
+      }
+      selected = 0;
+      setState(() {});
+    } else if (selectedTypes.contains(CategoryType.Dilemmas)) {
+      if (kDebugMode) {
+        print('2');
+      }
+      selected = 1;
+      setState(() {});
+    } else if (selectedTypes.contains(CategoryType.Situations)) {
+      if (kDebugMode) {
+        print('3');
+      }
+      selected = 2;
+      setState(() {});
+    }
+    index = random.nextInt(widget.category[categoryIndex].questions!.length);
+    while (selected == 2 &&
+        widget.category[categoryIndex].questions![index].type != "Situations") {
+      index = random.nextInt(widget.category[categoryIndex].questions!.length);
+      print(index);
+    }
+    while (selected == 1 &&
+        widget.category[categoryIndex].questions![index].type != "Dilemma") {
+      index = random.nextInt(widget.category[categoryIndex].questions!.length);
+      print(index);
+    }
+    if (kDebugMode) {
+      print(categoryIndex);
+    }
+    setState(() {});
   }
 }
 
