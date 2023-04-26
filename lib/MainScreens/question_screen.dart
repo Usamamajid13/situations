@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'dart:async';
 import 'dart:math';
 
@@ -6,12 +8,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:glassmorphism/glassmorphism.dart';
+import 'package:like_button/like_button.dart';
 
 import '../Constants/constants.dart';
 import '../Utils/app_utils.dart';
+import 'categories_selection_screen.dart';
 
 class QuestionScreen extends StatefulWidget {
-  const QuestionScreen({Key? key}) : super(key: key);
+  List<CategoryModel> category;
+  QuestionScreen(this.category, {Key? key}) : super(key: key);
 
   @override
   State<QuestionScreen> createState() => _QuestionScreenState();
@@ -20,6 +25,17 @@ class QuestionScreen extends StatefulWidget {
 class _QuestionScreenState extends State<QuestionScreen> {
   var utils = AppUtils();
   int _key = 0;
+  final random = Random();
+  bool isLiked = false;
+  int index = 0;
+  @override
+  void initState() {
+    index = random.nextInt(widget.category[categoryIndex].questions!.length);
+    if (kDebugMode) {
+      print(categoryIndex);
+    }
+    super.initState();
+  }
 
   final StreamController<void> _streamController = StreamController<void>();
   @override
@@ -30,15 +46,6 @@ class _QuestionScreenState extends State<QuestionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, dynamic> arguments =
-        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
-
-    final String name = arguments['name'];
-    final String type = arguments['type'];
-    final String id = arguments['id'];
-    if (kDebugMode) {
-      print(type);
-    }
     return Scaffold(
       body: Container(
         width: MediaQuery.of(context).size.width,
@@ -61,7 +68,8 @@ class _QuestionScreenState extends State<QuestionScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Image.asset(
-                    type == "Situations"
+                    widget.category[categoryIndex].questions![index].type ==
+                            "Situations"
                         ? "assets/situationsIcon.png"
                         : "assets/DilemmasIcon.png",
                     scale: 4,
@@ -70,9 +78,15 @@ class _QuestionScreenState extends State<QuestionScreen> {
                     width: 10,
                   ),
                   Text(
-                    type.toUpperCase(),
+                    widget.category[categoryIndex].questions![index].type!
+                        .toUpperCase(),
                     style: utils.largeHeadingTextStyle(
-                      color: type == "Situations" ? pinkColor : blueColor,
+                      color: widget.category[categoryIndex].questions![index]
+                                  .type
+                                  .toString() ==
+                              "Situations"
+                          ? pinkColor
+                          : blueColor,
                       fontFamily: "PassionOne",
                     ),
                   ),
@@ -102,7 +116,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
                             const Color(0xFFffffff).withOpacity(0.1),
                             const Color(0xFFFFFFFF).withOpacity(0.05),
                           ],
-                          stops: [
+                          stops: const [
                             0.1,
                             1,
                           ],
@@ -136,283 +150,245 @@ class _QuestionScreenState extends State<QuestionScreen> {
                           child: child,
                         );
                       },
-                      child: StreamBuilder<QuerySnapshot>(
-                        key: ValueKey<int>(_key),
-                        stream: FirebaseFirestore.instance
-                            .collection('categories')
-                            .doc(id)
-                            .collection('questions')
-                            .snapshots(),
-                        builder: (BuildContext context,
-                            AsyncSnapshot<QuerySnapshot> snapshot) {
-                          if (snapshot.hasError) {
-                            return const Text('Something went wrong');
-                          }
-
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Text('Loading...');
-                          }
-
-                          final questions = snapshot.data!.docs;
-                          if (kDebugMode) {
-                            print(questions.length);
-                          }
-
-                          return questions.isNotEmpty
-                              ? GlassmorphicContainer(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.8,
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.61,
-                                  borderRadius: 10.0,
-                                  blur: 20,
-                                  alignment: Alignment.center,
-                                  border: 0.5,
-                                  linearGradient: LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: [
-                                      const Color(0xFFffffff).withOpacity(0.1),
-                                      const Color(0xFFFFFFFF).withOpacity(0.05),
-                                    ],
-                                    stops: [
-                                      0.1,
-                                      1,
-                                    ],
+                      child: widget
+                              .category[categoryIndex].questions!.isNotEmpty
+                          ? GlassmorphicContainer(
+                              key: ValueKey<int>(_key),
+                              width: MediaQuery.of(context).size.width * 0.8,
+                              height: MediaQuery.of(context).size.height * 0.61,
+                              borderRadius: 10.0,
+                              blur: 20,
+                              alignment: Alignment.center,
+                              border: 0.5,
+                              linearGradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  const Color(0xFFffffff).withOpacity(0.1),
+                                  const Color(0xFFFFFFFF).withOpacity(0.05),
+                                ],
+                                stops: const [
+                                  0.1,
+                                  1,
+                                ],
+                              ),
+                              borderGradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  const Color(0xFFffffff).withOpacity(0.5),
+                                  const Color((0xFFFFFFFF)).withOpacity(0.5),
+                                ],
+                              ),
+                              child: Container(
+                                width: MediaQuery.of(context).size.width * 0.90,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.8,
+                                padding: const EdgeInsets.all(20.0),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.2),
+                                      blurRadius: 2,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                  image: const DecorationImage(
+                                    image: AssetImage(
+                                      "assets/glass.png",
+                                    ),
+                                    fit: BoxFit.cover,
                                   ),
-                                  borderGradient: LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: [
-                                      const Color(0xFFffffff).withOpacity(0.5),
-                                      const Color((0xFFFFFFFF))
-                                          .withOpacity(0.5),
-                                    ],
-                                  ),
-                                  child: Container(
-                                    width: MediaQuery.of(context).size.width *
-                                        0.90,
-                                    height: MediaQuery.of(context).size.height *
-                                        0.8,
-                                    padding: const EdgeInsets.all(20.0),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.2),
-                                          blurRadius: 2,
-                                          offset: const Offset(0, 2),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.4,
+                                      height: 30,
+                                      decoration: BoxDecoration(
+                                        color: Colors.black.withOpacity(0.5),
+                                        borderRadius:
+                                            BorderRadius.circular(30.0),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          widget
+                                              .category[categoryIndex].category
+                                              .toString(),
+                                          style: utils.extraSmallTitleTextStyle(
+                                            color: Colors.white,
+                                            fontFamily: "Montserrat",
+                                          ),
                                         ),
-                                      ],
-                                      image: const DecorationImage(
-                                        image: AssetImage(
-                                          "assets/glass.png",
-                                        ),
-                                        fit: BoxFit.cover,
                                       ),
                                     ),
-                                    child: Column(
+                                    Text(
+                                      widget.category[categoryIndex]
+                                          .questions![index].question
+                                          .toString(),
+                                      style: const TextStyle(
+                                        fontFamily: "MontserratBold",
+                                        fontSize: 20,
+                                        color: Colors.white,
+                                        height: 1.5,
+                                        fontWeight: FontWeight.w900,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.4,
-                                          height: 30,
-                                          decoration: BoxDecoration(
-                                            color:
-                                                Colors.black.withOpacity(0.5),
-                                            borderRadius:
-                                                BorderRadius.circular(30.0),
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              name,
-                                              style: utils
-                                                  .extraSmallTitleTextStyle(
-                                                color: Colors.white,
-                                                fontFamily: "Montserrat",
-                                              ),
-                                            ),
-                                          ),
+                                        LikeButton(
+                                          onTap: onLikeButtonTapped,
+                                          isLiked: isLiked,
                                         ),
-                                        Text(
-                                          questions[Random()
-                                                  .nextInt(questions.length)]
-                                              ['question'],
-                                          style: const TextStyle(
-                                            fontFamily: "MontserratBold",
-                                            fontSize: 20,
+                                        GestureDetector(
+                                          onTap: () {
+                                            if (kDebugMode) {
+                                              print("Change");
+                                            }
+                                            _streamController.add(null);
+                                            _key++;
+                                            index = random.nextInt(widget
+                                                .category[categoryIndex]
+                                                .questions!
+                                                .length);
+                                            setState(() {});
+                                          },
+                                          child: const Icon(
+                                            CupertinoIcons.arrow_2_circlepath,
                                             color: Colors.white,
-                                            height: 1.5,
-                                            fontWeight: FontWeight.w900,
+                                            size: 30,
                                           ),
-                                          textAlign: TextAlign.center,
                                         ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            const Icon(
-                                              Icons.favorite_border,
-                                              color: Colors.white,
-                                              size: 30,
-                                            ),
-                                            GestureDetector(
-                                              onTap: () {
-                                                if (kDebugMode) {
-                                                  print("Change");
-                                                }
-                                                _streamController.add(null);
-                                                _key++;
-
-                                                setState(() {});
-                                              },
-                                              child: const Icon(
-                                                CupertinoIcons
-                                                    .arrow_2_circlepath,
-                                                color: Colors.white,
-                                                size: 30,
-                                              ),
-                                            ),
-                                          ],
-                                        )
                                       ],
-                                    ),
-                                  ),
-                                )
-                              : GlassmorphicContainer(
+                                    )
+                                  ],
+                                ),
+                              ),
+                            )
+                          : GlassmorphicContainer(
+                              width: MediaQuery.of(context).size.width * 0.8,
+                              height: MediaQuery.of(context).size.height * 0.61,
+                              borderRadius: 10.0,
+                              blur: 20,
+                              alignment: Alignment.center,
+                              border: 0.5,
+                              linearGradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  const Color(0xFFffffff).withOpacity(0.1),
+                                  const Color(0xFFFFFFFF).withOpacity(0.05),
+                                ],
+                                stops: const [
+                                  0.1,
+                                  1,
+                                ],
+                              ),
+                              borderGradient: LinearGradient(
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  const Color(0xFFffffff).withOpacity(0.5),
+                                  const Color((0xFFFFFFFF)).withOpacity(0.5),
+                                ],
+                              ),
+                              child: Center(
+                                child: Container(
                                   width:
                                       MediaQuery.of(context).size.width * 0.8,
                                   height:
-                                      MediaQuery.of(context).size.height * 0.61,
-                                  borderRadius: 10.0,
-                                  blur: 20,
-                                  alignment: Alignment.center,
-                                  border: 0.5,
-                                  linearGradient: LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: [
-                                      const Color(0xFFffffff).withOpacity(0.1),
-                                      const Color(0xFFFFFFFF).withOpacity(0.05),
+                                      MediaQuery.of(context).size.height * 0.65,
+                                  padding: const EdgeInsets.all(20.0),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.2),
+                                        blurRadius: 2,
+                                        offset: const Offset(0, 2),
+                                      ),
                                     ],
-                                    stops: [
-                                      0.1,
-                                      1,
-                                    ],
+                                    image: const DecorationImage(
+                                      image: AssetImage(
+                                        "assets/glass.png",
+                                      ),
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
-                                  borderGradient: LinearGradient(
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                    colors: [
-                                      const Color(0xFFffffff).withOpacity(0.5),
-                                      const Color((0xFFFFFFFF))
-                                          .withOpacity(0.5),
-                                    ],
-                                  ),
-                                  child: Center(
-                                    child: Container(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.8,
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.65,
-                                      padding: const EdgeInsets.all(20.0),
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(10.0),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color:
-                                                Colors.black.withOpacity(0.2),
-                                            blurRadius: 2,
-                                            offset: const Offset(0, 2),
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.4,
+                                        height: 30,
+                                        decoration: BoxDecoration(
+                                          color: Colors.black.withOpacity(0.5),
+                                          borderRadius:
+                                              BorderRadius.circular(30.0),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            widget.category[categoryIndex]
+                                                .category
+                                                .toString(),
+                                            style:
+                                                utils.extraSmallTitleTextStyle(
+                                              color: Colors.white,
+                                              fontFamily: "MontserratBold",
+                                            ),
                                           ),
-                                        ],
-                                        image: const DecorationImage(
-                                          image: AssetImage(
-                                            "assets/glass.png",
-                                          ),
-                                          fit: BoxFit.cover,
                                         ),
                                       ),
-                                      child: Column(
+                                      const Text(
+                                        "No Questions Available",
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          color: Colors.white,
+                                          height: 1.5,
+                                          fontFamily: "MontserratBold",
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.4,
-                                            height: 30,
-                                            decoration: BoxDecoration(
-                                              color:
-                                                  Colors.black.withOpacity(0.5),
-                                              borderRadius:
-                                                  BorderRadius.circular(30.0),
-                                            ),
-                                            child: Center(
-                                              child: Text(
-                                                name,
-                                                style: utils
-                                                    .extraSmallTitleTextStyle(
-                                                  color: Colors.white,
-                                                  fontFamily: "MontserratBold",
-                                                ),
-                                              ),
-                                            ),
+                                          const Icon(
+                                            Icons.favorite_border,
+                                            color: Colors.white,
+                                            size: 30,
                                           ),
-                                          const Text(
-                                            "No Questions Available",
-                                            style: TextStyle(
-                                              fontSize: 20,
-                                              color: Colors.white,
-                                              height: 1.5,
-                                              fontFamily: "MontserratBold",
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            textAlign: TextAlign.center,
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              const Icon(
-                                                Icons.favorite_border,
-                                                color: Colors.white,
-                                                size: 30,
-                                              ),
-                                              GestureDetector(
-                                                onTap: () {
-                                                  if (kDebugMode) {
-                                                    print("Change");
-                                                  }
-                                                  _streamController.add(null);
-                                                  _key++;
+                                          GestureDetector(
+                                            onTap: () {
+                                              _streamController.add(null);
+                                              _key++;
 
-                                                  setState(() {});
-                                                },
-                                                child: const Icon(
-                                                  CupertinoIcons
-                                                      .arrow_2_circlepath,
-                                                  color: Colors.white,
-                                                  size: 30,
-                                                ),
-                                              ),
-                                            ],
-                                          )
+                                              setState(() {});
+                                            },
+                                            child: const Icon(
+                                              CupertinoIcons.arrow_2_circlepath,
+                                              color: Colors.white,
+                                              size: 30,
+                                            ),
+                                          ),
                                         ],
-                                      ),
-                                    ),
+                                      )
+                                    ],
                                   ),
-                                );
-                        },
-                      ),
+                                ),
+                              ),
+                            ),
                     ),
                   ],
                 ),
@@ -426,12 +402,12 @@ class _QuestionScreenState extends State<QuestionScreen> {
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(
+                  children: const [
+                    Icon(
                       Icons.arrow_back,
                       color: Colors.white,
                     ),
-                    const SizedBox(
+                    SizedBox(
                       width: 10,
                     ),
                     Text(
@@ -450,6 +426,38 @@ class _QuestionScreenState extends State<QuestionScreen> {
         ),
       ),
     );
+  }
+
+  Future<bool> onLikeButtonTapped(bool isLikede) async {
+    isLiked = !isLiked;
+    print(isLiked);
+    if (isLiked == true) {
+      widget.category[categoryIndex].questions![index].likes =
+          widget.category[categoryIndex].questions![index].likes! + 1;
+    } else {
+      widget.category[categoryIndex].questions![index].likes =
+          widget.category[categoryIndex].questions![index].likes! - 1;
+    }
+    print("Assigned like");
+    if (kDebugMode) {
+      print(widget.category[categoryIndex].questions![index].likes);
+    }
+    print("Updating Like");
+    print(widget.category);
+    updateData(widget.category);
+    setState(() {});
+    return isLiked;
+  }
+
+  Future<void> updateData(List<CategoryModel> categories) async {
+    try {
+      await FirebaseFirestore.instance.collection("data").doc("data").set({
+        "categories": categories.map((category) => category.toJson()).toList(),
+      }, SetOptions(merge: true));
+      print("Document updated");
+    } catch (e) {
+      print(e);
+    }
   }
 }
 

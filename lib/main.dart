@@ -60,7 +60,11 @@ class _MyAppState extends State<MyApp> {
         splashScreenRoute: (context) => const SplashScreen(),
         landingScreenRoute: (context) => const LandingScreen(),
         settingsScreenRoute: (context) => const SettingsScreen(),
-        questionScreenRoute: (context) => const QuestionScreen(),
+        questionScreenRoute: (context) {
+          List<CategoryModel> i =
+              ModalRoute.of(context)!.settings.arguments as List<CategoryModel>;
+          return QuestionScreen(i);
+        },
         categoriesSelectionScreenRoute: (context) =>
             const CategoriesSelectionScreen(),
       },

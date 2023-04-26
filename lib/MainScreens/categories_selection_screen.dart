@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +18,7 @@ class CategoriesSelectionScreen extends StatefulWidget {
 class _CategoriesSelectionScreenState extends State<CategoriesSelectionScreen> {
   var utils = AppUtils();
   int selected = 0;
-
+  CategoryModel? categoryModel;
   List<CategoryModel> categories = [];
 
   @override
@@ -25,20 +27,37 @@ class _CategoriesSelectionScreenState extends State<CategoriesSelectionScreen> {
     checkSelectedTypes();
   }
 
-  void getCategories() async {
-    // Get categories based on selected types
+  void getDataFromFirebase() async {
+    DocumentSnapshot<Map<String, dynamic>> documentSnapshot =
+        await FirebaseFirestore.instance.collection('data').doc('data').get();
 
-    QuerySnapshot snapshot =
-        await FirebaseFirestore.instance.collection('categories').get();
-    categories = snapshot.docs.map((category) {
-      String type = category['type'];
-      return CategoryModel(id: category.id, name: category['name'], type: type);
-    }).toList();
+    if (documentSnapshot.exists && documentSnapshot.data() != null) {
+      List<dynamic> data = documentSnapshot.data()!['categories'];
+      if (kDebugMode) {
+        print(data);
+      }
 
-    setState(() {}); // Update UI
-    if (kDebugMode) {
-      print(categories.toString());
+      for (var category in data) {
+        categoryModel = CategoryModel.fromJson(jsonDecode(category));
+
+        categories.add(categoryModel!);
+        setState(() {});
+      }
+      for (int i = 0; i < categories.length; i++) {
+        if (kDebugMode) {
+          print(categories[i].category);
+        }
+        for (int j = 0; j < categories[i].questions!.length; j++) {
+          if (kDebugMode) {
+            print(categories[i].questions![j].question.toString());
+          }
+        }
+        if (kDebugMode) {
+          print("\n ");
+        }
+      }
     }
+    setState(() {});
   }
 
   @override
@@ -75,14 +94,11 @@ class _CategoriesSelectionScreenState extends State<CategoriesSelectionScreen> {
                 selected == 0
                     ? GestureDetector(
                         onTap: () {
+                          categoryIndex = i;
                           Navigator.pushNamed(
                             context,
                             questionScreenRoute,
-                            arguments: {
-                              'name': categories[i].name,
-                              'type': categories[i].type,
-                              'id': categories[i].id,
-                            },
+                            arguments: categories,
                           );
                         },
                         child: Container(
@@ -107,7 +123,7 @@ class _CategoriesSelectionScreenState extends State<CategoriesSelectionScreen> {
                           ),
                           child: Center(
                             child: Text(
-                              categories[i].name.toString(),
+                              categories[i].category.toString(),
                               style: utils.mediumTitleBoldTextStyle(
                                 color: Colors.white,
                                 fontFamily: "Montserrat",
@@ -117,17 +133,16 @@ class _CategoriesSelectionScreenState extends State<CategoriesSelectionScreen> {
                         ),
                       )
                     : selected == 1 &&
-                            categories[i].type.toString() == "Dilemmas"
+                            categories[i]
+                                .questions!
+                                .any((element) => element.type == "Dilemma")
                         ? GestureDetector(
                             onTap: () {
+                              categoryIndex = i;
                               Navigator.pushNamed(
                                 context,
                                 questionScreenRoute,
-                                arguments: {
-                                  'name': categories[i].name,
-                                  'type': categories[i].type,
-                                  'id': categories[i].id,
-                                },
+                                arguments: categories,
                               );
                             },
                             child: Container(
@@ -152,26 +167,25 @@ class _CategoriesSelectionScreenState extends State<CategoriesSelectionScreen> {
                               ),
                               child: Center(
                                 child: Text(
-                                  categories[i].name.toString(),
+                                  categories[i].category.toString(),
                                   style: utils.mediumTitleBoldTextStyle(
                                     color: Colors.white,
+                                    fontFamily: "Montserrat",
                                   ),
                                 ),
                               ),
                             ),
                           )
                         : selected == 2 &&
-                                categories[i].type.toString() == "Situations"
+                                categories[i].questions!.any(
+                                    (element) => element.type == "Situations")
                             ? GestureDetector(
                                 onTap: () {
+                                  categoryIndex = i;
                                   Navigator.pushNamed(
                                     context,
                                     questionScreenRoute,
-                                    arguments: {
-                                      'name': categories[i].name,
-                                      'type': categories[i].type,
-                                      'id': categories[i].id,
-                                    },
+                                    arguments: categories,
                                   );
                                 },
                                 child: Container(
@@ -197,9 +211,10 @@ class _CategoriesSelectionScreenState extends State<CategoriesSelectionScreen> {
                                   ),
                                   child: Center(
                                     child: Text(
-                                      categories[i].name.toString(),
+                                      categories[i].category.toString(),
                                       style: utils.mediumTitleBoldTextStyle(
                                         color: Colors.white,
+                                        fontFamily: "Montserrat",
                                       ),
                                     ),
                                   ),
@@ -213,6 +228,7 @@ class _CategoriesSelectionScreenState extends State<CategoriesSelectionScreen> {
                 onTap: () async {
                   await Navigator.pushNamed(context, settingsScreenRoute);
                   checkSelectedTypes();
+                  setState(() {});
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -245,6 +261,7 @@ class _CategoriesSelectionScreenState extends State<CategoriesSelectionScreen> {
   }
 
   void checkSelectedTypes() {
+    categories = [];
     if (selectedTypes.contains(CategoryType.Situations) &&
         selectedTypes.contains(CategoryType.Dilemmas)) {
       if (kDebugMode) {
@@ -265,14 +282,57 @@ class _CategoriesSelectionScreenState extends State<CategoriesSelectionScreen> {
       selected = 2;
       setState(() {});
     }
-    getCategories();
+    getDataFromFirebase();
   }
 }
 
 class CategoryModel {
-  final String id;
-  final String name;
-  final String type;
+  String? category;
+  List<Questions>? questions;
 
-  CategoryModel({required this.id, required this.name, required this.type});
+  CategoryModel({this.category, this.questions});
+
+  CategoryModel.fromJson(Map<String, dynamic> json) {
+    category = json['category'];
+    if (json['questions'] != null) {
+      questions = <Questions>[];
+      json['questions'].forEach((v) {
+        questions!.add(Questions.fromJson(v));
+      });
+    }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['category'] = category;
+    if (questions != null) {
+      data['questions'] = questions!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class Questions {
+  String? question;
+  String? type;
+  String? category;
+  int? likes;
+
+  Questions({this.question, this.type, this.category, this.likes});
+
+  Questions.fromJson(Map<String, dynamic> json) {
+    question = json['question'];
+    type = json['type'];
+    category = json['category'];
+    likes = json['likes'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['question'] = question;
+    data['type'] = type;
+    data['category'] = category;
+    data['likes'] = likes;
+    return data;
+  }
 }

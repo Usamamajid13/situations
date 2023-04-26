@@ -11,6 +11,8 @@ const questionScreenRoute = "/questionScreenRoute";
 const landingScreenRoute = "/landingScreenRoute";
 const categoriesSelectionScreenRoute = "/categoriesSelectionScreenRoute";
 
+var categoryIndex;
+
 enum CategoryType {
   Situations,
   both,
@@ -20,7 +22,7 @@ enum CategoryType {
 Set<CategoryType> selectedTypes = {
   CategoryType.Dilemmas,
   CategoryType.Situations
-}; // Global variable to store selected types
+};
 
 void updateSelectedTypes(CategoryType type) {
   if (type == CategoryType.both) {
