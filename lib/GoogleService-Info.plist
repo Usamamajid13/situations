@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>309782174468-dugl8ie9tp0m66jvv98otllukf636sc7.apps.googleusercontent.com</string>
+	<string>309782174468-k9qkud6v0olkkcr2qct5909dn14be956.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.309782174468-dugl8ie9tp0m66jvv98otllukf636sc7</string>
+	<string>com.googleusercontent.apps.309782174468-k9qkud6v0olkkcr2qct5909dn14be956</string>
 	<key>API_KEY</key>
 	<string>AIzaSyDznNFJpMW68BtfyUmu3iGbgZ-uIjncpUA</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.ardeka.situations</string>
+	<string>com.remydeklein.situations</string>
 	<key>PROJECT_ID</key>
 	<string>situations0</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:309782174468:ios:3a83e3487a88708d460e51</string>
+	<string>1:309782174468:ios:2627c4fe4970d030460e51</string>
 </dict>
 </plist>

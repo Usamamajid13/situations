@@ -8,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:like_button/like_button.dart';
 
@@ -23,24 +24,30 @@ class QuestionScreen extends StatefulWidget {
   State<QuestionScreen> createState() => _QuestionScreenState();
 }
 
-class _QuestionScreenState extends State<QuestionScreen> {
+class _QuestionScreenState extends State<QuestionScreen>
+    with TickerProviderStateMixin {
   var utils = AppUtils();
   int _key = 0;
   final random = Random();
   bool isLiked = false;
   int index = 0;
   int selected = 0;
+  late AnimationController animationController;
+
   @override
   void initState() {
+    animationController = AnimationController(
+      vsync: this,
+    );
+
     checkSelectedTypes();
 
     super.initState();
   }
 
-  final StreamController<void> _streamController = StreamController<void>();
   @override
   void dispose() {
-    _streamController.close();
+    animationController.dispose();
     super.dispose();
   }
 
@@ -104,7 +111,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
                       bottom: 0,
                       child: GlassmorphicContainer(
                         width: MediaQuery.of(context).size.width * 0.75,
-                        height: MediaQuery.of(context).size.height * 0.65,
+                        height: MediaQuery.of(context).size.height * 0.6,
                         borderRadius: 10.0,
                         blur: 20,
                         alignment: Alignment.center,
@@ -141,15 +148,11 @@ class _QuestionScreenState extends State<QuestionScreen> {
                         ),
                       ),
                     ),
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 300),
-                      transitionBuilder:
-                          (Widget child, Animation<double> animation) {
-                        return FadeTransition(
-                          opacity: animation,
-                          child: child,
-                        );
-                      },
+                    Animate(
+                      controller: animationController,
+                      effects: const [
+                        ScaleEffect(),
+                      ],
                       child: widget
                               .category[categoryIndex].questions!.isNotEmpty
                           ? GlassmorphicContainer(
@@ -249,17 +252,57 @@ class _QuestionScreenState extends State<QuestionScreen> {
                                         ),
                                         GestureDetector(
                                           onTap: () {
-                                            isLiked = false;
-                                            if (kDebugMode) {
-                                              print("Change");
-                                            }
-                                            _streamController.add(null);
-                                            _key++;
-                                            index = random.nextInt(widget
-                                                .category[categoryIndex]
-                                                .questions!
-                                                .length);
-                                            setState(() {});
+                                            animationController
+                                                .loop(
+                                              count: 1,
+                                              period: const Duration(
+                                                  milliseconds: 200),
+                                              reverse: true,
+                                            )
+                                                .whenCompleteOrCancel(() {
+                                              isLiked = false;
+
+                                              if (kDebugMode) {
+                                                print("Change");
+                                              }
+
+                                              _key++;
+                                              index = random.nextInt(widget
+                                                  .category[categoryIndex]
+                                                  .questions!
+                                                  .length);
+                                              while (selected == 2 &&
+                                                  widget
+                                                          .category[
+                                                              categoryIndex]
+                                                          .questions![index]
+                                                          .type !=
+                                                      "Situations") {
+                                                index = random.nextInt(widget
+                                                    .category[categoryIndex]
+                                                    .questions!
+                                                    .length);
+                                                if (kDebugMode) {
+                                                  print(index);
+                                                }
+                                              }
+                                              while (selected == 1 &&
+                                                  widget
+                                                          .category[
+                                                              categoryIndex]
+                                                          .questions![index]
+                                                          .type !=
+                                                      "Dilemma") {
+                                                index = random.nextInt(widget
+                                                    .category[categoryIndex]
+                                                    .questions!
+                                                    .length);
+                                                if (kDebugMode) {
+                                                  print(index);
+                                                }
+                                              }
+                                              setState(() {});
+                                            });
                                           },
                                           child: const Icon(
                                             CupertinoIcons.arrow_2_circlepath,
@@ -372,7 +415,6 @@ class _QuestionScreenState extends State<QuestionScreen> {
                                           ),
                                           GestureDetector(
                                             onTap: () {
-                                              _streamController.add(null);
                                               _key++;
 
                                               setState(() {});
@@ -506,12 +548,16 @@ class _QuestionScreenState extends State<QuestionScreen> {
     while (selected == 2 &&
         widget.category[categoryIndex].questions![index].type != "Situations") {
       index = random.nextInt(widget.category[categoryIndex].questions!.length);
-      print(index);
+      if (kDebugMode) {
+        print(index);
+      }
     }
     while (selected == 1 &&
         widget.category[categoryIndex].questions![index].type != "Dilemma") {
       index = random.nextInt(widget.category[categoryIndex].questions!.length);
-      print(index);
+      if (kDebugMode) {
+        print(index);
+      }
     }
     if (kDebugMode) {
       print(categoryIndex);
